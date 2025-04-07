@@ -2,7 +2,8 @@ require('dotenv').config();
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
-const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_CLUSTER}/?retryWrites=true&w=majority&appName=${process.env.DB_NAME}`;
+const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_CLUSTER}/${process.env.DB_NAME}?retryWrites=true&w=majority&ssl=true`;
+
 //used for connecting to mongo database
 const client = new MongoClient(uri, {
   serverApi: {
@@ -11,17 +12,24 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   }
 });
+
+db = null;
 //connection 
 async function connectDB() {
   try {
     await client.connect();
-    await client.db("admin").command({ ping: 1 });
+    db = client.db(process.env.DB_NAME);
+    await client.db("admin");
     console.log("Successfully connected to MongoDB!");
   } catch (error) {
     console.error("MongoDB connection error:", error);
-  } finally {
-    await client.close();
+  
   }
 }
-
-module.exports = {client,connectDB };
+function getDB() {
+  if (!db) {
+    throw new Error("❌ DB not connected. Call connectDB() first.");
+  }
+  return db;
+}
+module.exports = {connectDB,getDB, client };
