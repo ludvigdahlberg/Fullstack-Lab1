@@ -6,21 +6,19 @@
     <title>Document</title>
 </head>
 <body>
-  <h1>Alla Rätter</h1>
+  <h1>All dishes</h1>
   <ul id="dish-list"></ul>
 
-  <script>
-    fetch('/api/dishes')
-      .then(res => res.json())
-      .then(dishes => {
-        const list = document.getElementById('dish-list');
-        dishes.forEach(d => {
-          const li = document.createElement('li');
-          li.textContent = `${d.name}`;
-          list.appendChild(li);
-        });
-      })
-      .catch(err => console.error("Fel:", err));
-  </script>
+  
+
+  <h2>Specific dish</h2>
+  <form id="dish-form">
+    <label for="dishName">Dish name:</label>
+    <input type="text" id="dishName" name="dishName"><br><br>
+    <button type="submit">Search</button>
+  </form> 
+
+  <div id="result"></div>
+  <script src="script.js"></script>
 </body>
 </html>
