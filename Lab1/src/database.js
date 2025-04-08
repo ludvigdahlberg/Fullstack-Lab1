@@ -28,7 +28,7 @@ async function connectDB() {
 }
 function getDB() {
   if (!db) {
-    throw new Error("❌ DB not connected. Call connectDB() first.");
+    throw new Error("DB not connected.");
   }
   return db;
 }
