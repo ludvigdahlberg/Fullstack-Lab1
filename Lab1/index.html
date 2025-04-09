@@ -12,13 +12,38 @@
   
 
   <h2>Specific dish</h2>
-  <form id="dish-form">
+  <form id="search-form">
     <label for="dishName">Dish name:</label>
     <input type="text" id="dishName" name="dishName"><br><br>
     <button type="submit">Search</button>
   </form> 
 
   <div id="result"></div>
+  <H2>Add Meal</H2>
+  <div class="newMeal">
+    <form id="add-dish-form">
+      <label for="name">Name of dish: </label>
+      <input type="text" class="name" name="name" required>
+      
+      <div id="ingredients-wrapper">
+      <label for="ingredients">Ingredients</label>
+      <input type="text" name="ingredients[]" placeholder="Ingredient 1" required>
+      </div>  
+      <button type="button" onclick="addIngredient()">Add Ingredient</button>
+
+      <div id="steps-wrapper">
+        <label>Preparation Steps:</label>
+        <input type="text" name="preperationSteps[]" placeholder="Step 1" required>
+      </div>
+      <button type="button" onclick="addStep()">Add Step</button>
+    
+      <input type="number" name="cookingTime" placeholder="Cooking Time (min)">
+      <input type="text" name="origin" placeholder="Origin">
+      <input type="text" name="tasteRanking" placeholder="Taste Ranking">
+    
+      <button type="submit">Submit Dish</button>
+    </form>
+  </div>
   <script src="script.js"></script>
 </body>
 </html>
