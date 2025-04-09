@@ -59,4 +59,24 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.put('/:id', async (req,res) => {
+const {id} = req.params;
+const update = req.body
+try{
+  const uptdatedDish = await Dish.findByIdAndUpdate(id, update, {
+    new:true,
+    runValidators: true
+  });
+
+  if(!updatedDish) {
+    return res.status(404).json({message: "Dish not found."})
+  }
+  res.json(updatedDish)
+
+}catch(error){
+  console.error("Error updating dish: ", error);
+  res.status(500).json({message: "Could not update dish."})
+}
+})
+
   module.exports = router;
