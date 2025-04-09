@@ -79,4 +79,22 @@ try{
 }
 })
 
+
+router.delete('/:id',async(req,res) => {
+  const {id} = req.params;
+  
+  try{  
+    const deletedDish = await Dish.findByIdAndDelete(id);
+
+    if (!deletedDish) {
+      return res.status(404).json({message: "Dish not found"})
+    }
+    res.json({message: "Dish deleted: ",deletedDish})
+
+  }catch(error){
+    console.error("Error deleting dish: ",error);
+    res.status(500).json({message: "Could not delete dish"})
+  }
+})
+
   module.exports = router;
