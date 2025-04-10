@@ -1,39 +1,26 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Load all dishes
   fetch('/api/dishes')
-    .then(res => res.json())
-    .then(dishes => {
-      const list = document.getElementById('dish-list');
-      const ol = document.createElement('ol');
+  .then(res => res.json())
+  .then(dishes => {
+    const tableBody = document.querySelector('#dishes tbody');
 
-      dishes.forEach(d => {
-        const li = document.createElement('li');
+    dishes.forEach(d => {
+      const row = document.createElement('tr');
 
-        const name = document.createElement('p');
-        name.textContent = `Name: ${d.name}`;
+      row.innerHTML = `
+        <td>${d.name}</td>
+        <td>${d.ingredients?.join(', ') || 'N/A'}</td>
+        <td>${d.preperationSteps?.join(', ') || 'N/A'}</td>
+        <td>${d.cookingTime ?? 'Unknown'} min</td>
+        <td>${d.origin ?? 'Unknown'}</td>
+        <td>${d.tasteRanking ?? 'Unrated'}</td>
+      `;
 
-        const ingredients = document.createElement('p');
-        ingredients.textContent = `Ingredients: ${d.ingredients?.join(', ')}`;
+      tableBody.appendChild(row);
+    });
+  })
+  .catch(err => console.error("Error loading dishes:", err));
 
-        const steps = document.createElement('p');
-        steps.textContent = `Preparation Steps: ${d.preperationSteps?.join(', ')}`;
-
-        const time = document.createElement('p');
-        time.textContent = `Cooking Time: ${d.cookingTime ?? 'unknown'} min`;
-
-        const origin = document.createElement('p');
-        origin.textContent = `Origin: ${d.origin ?? 'unknown'}`;
-
-        const ranking = document.createElement('p');
-        ranking.textContent = `Taste Ranking: ${d.tasteRanking ?? 'unknown'}`;
-
-        li.append(name, ingredients, steps, time, origin, ranking);
-        ol.appendChild(li);
-      });
-
-      list.appendChild(ol);
-    })
-    .catch(err => console.error("Error:", err));
 
   // Dish search
   const searchForm = document.getElementById('search-form');
@@ -59,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
           `;
         })
         .catch(err => {
-          document.getElementById('result').innerHTML = `<p style="color:red;">❌ ${err.message}</p>`;
+          document.getElementById('result').innerHTML = `<p style="color:red;"> ${err.message}</p>`;
         });
     });
   }
@@ -109,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const data = await res.json();
         if (res.ok) {
-          alert('✅ Dish added!');
+          alert('Dish added!');
           addForm.reset();
           document.getElementById('ingredients-wrapper').innerHTML =
             '<label for="ingredients">Ingredients</label><input type="text" name="ingredients[]" placeholder="Ingredient 1" required>';
@@ -117,11 +104,11 @@ document.addEventListener('DOMContentLoaded', () => {
             '<label>Preparation Steps:</label><input type="text" name="preperationSteps[]" placeholder="Step 1" required>';
           location.reload(); // optional: reload the list
         } else {
-          alert(`❌ Error: ${data.message}`);
+          alert(`Error: ${data.message}`);
         }
       } catch (err) {
         console.error("Error:", err);
-        alert("❌ Failed to submit dish");
+        alert("Failed to submit dish");
       }
     });
   }

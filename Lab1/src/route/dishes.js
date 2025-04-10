@@ -17,7 +17,6 @@ router.get('/', async (req, res) => {
   //specific ,meal
   router.get('/:name', async (req, res) => {
     const dishName = req.params.name;
-  
     try {
       const dish = await Dish.findOne({
         name: new RegExp(`^${dishName.trim()}$`, 'i') 
@@ -58,11 +57,12 @@ router.post('/', async (req, res) => {
     res.status(500).json({ message: "Could not add dish" });
   }
 });
-
+//edit existing dish
 router.put('/:id', async (req,res) => {
 const {id} = req.params;
 const update = req.body
 try{
+  //find dish by id
   const uptdatedDish = await Dish.findByIdAndUpdate(id, update, {
     new:true,
     runValidators: true
@@ -79,11 +79,12 @@ try{
 }
 })
 
-
+//delete dish
 router.delete('/:id',async(req,res) => {
   const {id} = req.params;
   
   try{  
+    //delete using id 
     const deletedDish = await Dish.findByIdAndDelete(id);
 
     if (!deletedDish) {

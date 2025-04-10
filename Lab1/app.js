@@ -19,25 +19,22 @@ app.get('/', (req, res) => {
 });
 
 // Connect to MongoDB with Mongoose
-mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_CLUSTER}/${process.env.DB_NAME}?retryWrites=true&w=majority&ssl=true`, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_CLUSTER}/${process.env.DB_NAME}?retryWrites=true&w=majority&ssl=true`)
 .then(() => {
-  console.log("✅ Connected to MongoDB with Mongoose");
+  console.log("Connected to MongoDB with Mongoose");
   app.use('/api/dishes', dishesRouter);
 
   app.listen(PORT, () => {
-    console.log(`🚀 Server is running on port ${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
   });
 })
 .catch(err => {
-  console.error("❌ Failed to connect to MongoDB:", err);
+  console.error("Failed to connect to MongoDB:", err);
 });
 
 // Optional: clean shutdown for Mongoose
 process.on('SIGINT', async () => {
   await mongoose.connection.close();
-  console.log("🛑 Mongoose connection closed");
+  console.log("Mongoose connection closed");
   process.exit(0);
 });
