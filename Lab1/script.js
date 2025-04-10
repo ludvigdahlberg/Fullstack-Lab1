@@ -1,31 +1,85 @@
 document.addEventListener('DOMContentLoaded', () => {
+  const tableBody = document.querySelector('#dishes tbody');
+
+  // Load all dishes
   fetch('/api/dishes')
-  .then(res => res.json())
-  .then(dishes => {
-    const tableBody = document.querySelector('#dishes tbody');
+    .then(res => res.json())
+    .then(dishes => {
+      dishes.forEach(d => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${d.name}</td>
+          <td>${d.ingredients?.join(', ') || 'N/A'}</td>
+          <td>${d.preperationSteps?.join(', ') || 'N/A'}</td>
+          <td>${d.cookingTime ?? 'Unknown'} min</td>
+          <td>${d.origin ?? 'Unknown'}</td>
+          <td>${d.tasteRanking ?? 'Unrated'}</td>
+          <td><button class="edit-btn" data-id="${d._id}">Edit</button></td>
+          <td><button class="delete-btn" data-id="${d._id}">Delete</button></td>
+        `;
+        tableBody.appendChild(row);
+      });
+    })
+    .catch(err => console.error("Error loading dishes:", err));
 
-    dishes.forEach(d => {
-      const row = document.createElement('tr');
+  // Handle Edit and Delete button clicks
+  tableBody.addEventListener('click', async (e) => {
+    const id = e.target.dataset.id;
+    if (!id) return;
 
-      row.innerHTML = `
-        <td>${d.name}</td>
-        <td>${d.ingredients?.join(', ') || 'N/A'}</td>
-        <td>${d.preperationSteps?.join(', ') || 'N/A'}</td>
-        <td>${d.cookingTime ?? 'Unknown'} min</td>
-        <td>${d.origin ?? 'Unknown'}</td>
-        <td>${d.tasteRanking ?? 'Unrated'}</td>
-      `;
+    // DELETE
+    if (e.target.classList.contains('delete-btn')) {
+      if (confirm("Are you sure you want to delete this dish?")) {
+        try {
+          const res = await fetch(`/api/dishes/${id}`, { method: 'DELETE' });
+          const result = await res.json();
+          alert('Dish deleted!');
+          location.reload();
+        } catch (error) {
+          console.error("Delete failed:", error);
+        }
+      }
+    }
 
-      tableBody.appendChild(row);
-    });
-  })
-  .catch(err => console.error("Error loading dishes:", err));
+    // EDIT
+    if (e.target.classList.contains('edit-btn')) {
+      const name = prompt("Enter new dish name:");
+      if (!name) return;
 
+      const ingredients = prompt("Enter ingredients (comma-separated):");
+      const preperationSteps = prompt("Enter steps (comma-separated):");
+      const cookingTime = prompt("Enter cooking time (in minutes):");
+      const origin = prompt("Enter origin:");
+      const tasteRanking = prompt("Enter taste ranking (1/5):");
+
+      const updatedDish = {
+        name,
+        ingredients: ingredients ? ingredients.split(',').map(i => i.trim()) : [],
+        preperationSteps: preperationSteps ? preperationSteps.split(',').map(s => s.trim()) : [],
+        cookingTime: parseInt(cookingTime),
+        origin,
+        tasteRanking: parseInt(tasteRanking)
+      };
+
+      try {
+        const res = await fetch(`/api/dishes/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedDish)
+        });
+        const result = await res.json();
+        alert('Dish updated!');
+        location.reload();
+      } catch (error) {
+        console.error("Edit failed:", error);
+      }
+    }
+  });
 
   // Dish search
   const searchForm = document.getElementById('search-form');
   if (searchForm) {
-    searchForm.addEventListener('submit', function(e) {
+    searchForm.addEventListener('submit', function (e) {
       e.preventDefault();
 
       const name = document.getElementById('dishName').value.trim();
@@ -52,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Add new ingredient field
-  window.addIngredient = function() {
+  window.addIngredient = function () {
     const wrapper = document.getElementById('ingredients-wrapper');
     const input = document.createElement('input');
     input.type = 'text';
@@ -62,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // Add new step field
-  window.addStep = function() {
+  window.addStep = function () {
     const wrapper = document.getElementById('steps-wrapper');
     const input = document.createElement('input');
     input.type = 'text';
@@ -74,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Add new dish
   const addForm = document.getElementById('add-dish-form');
   if (addForm) {
-    addForm.addEventListener('submit', async function(e) {
+    addForm.addEventListener('submit', async function (e) {
       e.preventDefault();
       const formData = new FormData(addForm);
 
@@ -102,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
             '<label for="ingredients">Ingredients</label><input type="text" name="ingredients[]" placeholder="Ingredient 1" required>';
           document.getElementById('steps-wrapper').innerHTML =
             '<label>Preparation Steps:</label><input type="text" name="preperationSteps[]" placeholder="Step 1" required>';
-          location.reload(); // optional: reload the list
+          location.reload();
         } else {
           alert(`Error: ${data.message}`);
         }
