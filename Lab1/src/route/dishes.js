@@ -3,7 +3,7 @@ const router = express.Router();
 const Dish = require('../Dish');
 
 
-
+//all meals
 router.get('/', async (req, res) => {
   try {
     const dishes = await Dish.find(); 
@@ -63,7 +63,7 @@ const {id} = req.params;
 const update = req.body
 try{
   //find dish by id
-  const uptdatedDish = await Dish.findByIdAndUpdate(id, update, {
+  const updatedDish = await Dish.findByIdAndUpdate(id, update, {
     new:true,
     runValidators: true
   });
