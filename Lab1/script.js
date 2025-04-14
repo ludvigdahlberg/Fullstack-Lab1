@@ -76,6 +76,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  //search for dish by id
+  const searchForm2 = document.getElementById('search-form2');
+if (searchForm2) {
+  searchForm2.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const id = document.getElementById('dishName2').value.trim(); // get ID from input
+
+    fetch(`/api/dishes/id/${id}`)
+      .then(res => {
+        if (!res.ok) throw new Error("Dish not found");
+        return res.json();
+      })
+      .then(dish => {
+        document.getElementById('result').innerHTML = `
+          <h3>${dish.name}</h3>
+          <p><strong>Ingredients:</strong> ${dish.ingredients?.join(', ')}</p>
+          <p><strong>Preparation steps:</strong> ${dish.preperationSteps?.join(', ')}</p>
+          <p><strong>Time:</strong> ${dish.cookingTime ?? 'unknown'} min</p>
+          <p><strong>Origin:</strong> ${dish.origin ?? 'unknown'}</p>
+          <p><strong>Taste Ranking:</strong> ${dish.tasteRanking ?? 'unknown'}</p>
+        `;
+      })
+      .catch(err => {
+        document.getElementById('result').innerHTML = `<p style="color:red;">${err.message}</p>`;
+      });
+  });
+}
+
   // Dish search
   const searchForm = document.getElementById('search-form');
   if (searchForm) {

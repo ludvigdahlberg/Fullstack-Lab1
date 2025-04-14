@@ -2,7 +2,21 @@ const express = require('express');
 const router = express.Router();
 const Dish = require('../Dish');
 
+//get by id(NEW!!)
+router.get('/id/:id', async(req,res) => {
+  const {id} = req.params;
+    try {
+      const dish = await Dish.findById(id)
 
+      if(!dish) {
+        return res.status(404).json({message: "Dish not found."})
+      }
+      res.json(dish)
+    } catch (error) {
+        console.error("Error fetching dish:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+})
 //all meals
 router.get('/', async (req, res) => {
   try {
